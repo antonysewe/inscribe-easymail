@@ -1,7 +1,7 @@
 import type { EmailHeader, EmailMessage, SyncResponse, SyncUpdatedResponse } from '@/lib/types';
 import { db } from '@/server/db';
 import axios from 'axios';
-//import { syncEmailsToDatabase } from './sync-to-db';
+import { syncEmailsToDatabase } from './sync-to-db';
 
 const API_BASE_URL = 'https://api.aurinko.io/v1';
 
@@ -68,9 +68,9 @@ class Account {
         if (!response) throw new Error("Failed to sync emails")
 
 
-        //await syncEmailsToDatabase(allEmails, account.id)
+        await syncEmailsToDatabase(allEmails, account.id)
 
-        // console.log('syncEmails', response)
+        console.log('syncEmails', response)
         await db.account.update({
             where: {
                 id: account.id,
@@ -82,7 +82,7 @@ class Account {
     }
 
     async getUpdatedEmails({ deltaToken, pageToken }: { deltaToken?: string, pageToken?: string }): Promise<SyncUpdatedResponse> {
-        // console.log('getUpdatedEmails', { deltaToken, pageToken });
+        console.log('getUpdatedEmails', { deltaToken, pageToken });
         let params: Record<string, string> = {};
         if (deltaToken) {
             params.deltaToken = deltaToken;
@@ -112,12 +112,12 @@ class Account {
                 syncResponse = await this.startSync(daysWithin);
             }
 
-            // console.log('Sync is ready. Tokens:', syncResponse);
+            console.log('Sync is ready. Tokens:', syncResponse);
 
             // Perform initial sync of updated emails
             let storedDeltaToken: string = syncResponse.syncUpdatedToken
             let updatedResponse = await this.getUpdatedEmails({ deltaToken: syncResponse.syncUpdatedToken });
-            // console.log('updatedResponse', updatedResponse)
+            console.log('updatedResponse', updatedResponse)
             if (updatedResponse.nextDeltaToken) {
                 storedDeltaToken = updatedResponse.nextDeltaToken
             }
@@ -132,7 +132,7 @@ class Account {
                 }
             }
 
-            // console.log('Initial sync complete. Total emails:', allEmails.length);
+            console.log('Initial sync complete. Total emails:', allEmails.length);
 
             // Store the nextDeltaToken for future incremental syncs
 
@@ -213,7 +213,7 @@ class Account {
     }
 
 
-    async getWebhooks() {
+   /* async getWebhooks() {
         type Response = {
             records: {
                 id: number;
@@ -257,11 +257,11 @@ class Account {
             }
         })
         return res.data
-    }
+    } */
 }
 type EmailAddress = {
     name: string;
     address: string;
-}
+} 
 
 export default Account;
