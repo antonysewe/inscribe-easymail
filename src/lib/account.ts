@@ -26,7 +26,7 @@ class Account {
         return response.data;
     }
 
-    async createSubscription() {
+  /*  async createSubscription() {
         const webhookUrl = process.env.NODE_ENV === 'development' ? 'https://bread-statutory-developing-restrictions.trycloudflare.com' : process.env.NEXT_PUBLIC_URL
         const res = await axios.post('https://api.aurinko.io/v1/subscriptions',
             {
@@ -41,7 +41,7 @@ class Account {
             }
         )
         return res.data
-    }
+    } */
 
     async syncEmails() {
         const account = await db.account.findUnique({
